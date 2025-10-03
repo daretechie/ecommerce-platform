@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  api:
+    build: ./api
+    environment:
+      - PORT=3001
+      - JWT_SECRET=${JWT_SECRET:-change_me}
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  webapp:
+    build: ./webapp
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+    

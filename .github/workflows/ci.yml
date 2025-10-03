@@ -1,0 +1,36 @@
+name: CI
+on:
+  pull_request:
+    paths:
+      - "api/**"
+      - "webapp/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+      - "webapp/**"
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: 
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test --if-present
+      - run: node -e "console.log('api build ok')" # replace with real build if added
+  webapp:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: webapp } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm test --if-present
+      - run: npm run build
